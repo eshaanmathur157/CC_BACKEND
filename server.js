@@ -7,8 +7,19 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Path to credentials file (in the SERVER folder)
-const CREDENTIALS_PATH = path.join(__dirname, 'gen-lang-client-0487226181-f8b8cd61d3d9.json');
+// 1. Define the filename exactly
+const CREDENTIALS_FILENAME = 'gen-lang-client-0487226181-f8b8cd61d3d9.json';
+const CREDENTIALS_PATH = path.join(__dirname, CREDENTIALS_FILENAME);
+
+if (!fs.existsSync(CREDENTIALS_PATH) && process.env.GOOGLE_CREDENTIALS) {
+  try {
+    console.log("Creating credentials file from Environment Variable...");
+    fs.writeFileSync(CREDENTIALS_PATH, process.env.GOOGLE_CREDENTIALS);
+  } catch (err) {
+    console.error("Failed to create credentials file:", err);
+  }
+}
+
 
 // Check if credentials exist on startup
 const credentialsExist = fs.existsSync(CREDENTIALS_PATH);
